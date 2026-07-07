@@ -27,30 +27,42 @@
 
   <div class="app-container">
     
-    <!-- Header -->
-    <header class="app-header">
-      <div class="header-left">
-        <div class="logo-icon">
-          <i data-lucide="compass"></i>
-        </div>
-        <div>
-          <h1>바다로그 <span class="header-badge">TideCast</span></h1>
-          <p class="subtitle">실시간 바다 물때표 및 기상 예보 서비스</p>
-        </div>
-      </div>
-      
-      <!-- Date Selector Control -->
-      <div class="header-right card">
-        <div class="date-selector-wrapper">
-          <i data-lucide="calendar" class="date-icon"></i>
-          <label for="target-date" class="sr-only">조회 날짜 선택</label>
-          <input type="date" id="target-date">
-        </div>
-      </div>
-    </header>
+    <!-- Hidden date input to maintain JS calculations -->
+    <input type="date" id="target-date" style="display: none;">
 
     <!-- Main Grid Dashboard -->
     <main class="dashboard-grid">
+      
+      <!-- Weekly 7-Day quick selector bar with Pinned Calendar Picker -->
+      <div class="weekly-selector-bar">
+        <div class="weekly-days-wrapper" id="weekly-days-list">
+          <!-- Dynamically generated via JS -->
+        </div>
+        <div class="calendar-btn-wrapper" style="position: relative;">
+          <button class="weekly-btn calendar-btn" id="calendar-trigger-btn">
+            <i data-lucide="calendar" style="width: 14px; height: 14px; color: var(--color-primary); display: inline-block; vertical-align: middle;"></i>
+            <span class="btn-date">달력 선택</span>
+          </button>
+          
+          <!-- Custom Calendar Modal Popup (Dropdown) -->
+          <div id="calendar-layer-modal" class="modal-overlay hidden">
+            <div class="calendar-modal-card">
+              <div class="calendar-modal-header">
+                <button id="cal-prev-month" class="cal-nav-btn">&lt;</button>
+                <span id="cal-month-title" class="cal-month-title">2026년 07월</span>
+                <button id="cal-next-month" class="cal-nav-btn">&gt;</button>
+                <button id="cal-close-btn" class="cal-close-btn">&times;</button>
+              </div>
+              <div class="calendar-weekdays">
+                <span class="sun">일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+              </div>
+              <div class="calendar-days-grid" id="calendar-days-grid">
+                <!-- Rendered dynamically in JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       
       <!-- ====================================================================
            PRIMARY AREA: Yeongmok Port (영목항) - Large top container
@@ -410,35 +422,9 @@
 
     </main>
 
-    <!-- iOS Install Prompt Modal (Hidden by default) -->
-    <div id="ios-install-modal" class="ios-install-overlay hidden">
-      <div class="ios-install-card">
-        <div class="modal-header-ios">
-          <div class="app-info-ios">
-            <img src="icon-192.png" alt="바다로그" class="app-logo-mini">
-            <div>
-              <h3>바다로그 앱 설치</h3>
-              <p>iPhone 홈 화면에 추가하여 편리하게 이용하세요.</p>
-            </div>
-          </div>
-          <button id="close-install-modal" class="close-btn-ios">&times;</button>
-        </div>
-        <div class="install-steps-ios">
-          <div class="step-ios">
-            <span class="step-num-ios">1</span>
-            <p>Safari 브라우저 하단 바의 <strong>공유</strong> 버튼 <span class="share-icon-placeholder-ios"><i data-lucide="share" style="width:14px;height:14px;display:inline-block;stroke-width:2.2;vertical-align:middle;"></i></span>을 터치합니다.</p>
-          </div>
-          <div class="step-ios">
-            <span class="step-num-ios">2</span>
-            <p>스크롤을 아래로 내려 <strong>'홈 화면에 추가'</strong>를 선택합니다.</p>
-          </div>
-          <div class="step-ios">
-            <span class="step-num-ios">3</span>
-            <p>상단 우측의 <strong>'추가'</strong>를 터치하면 앱 설치가 끝납니다!</p>
-          </div>
-        </div>
-      </div>
-    </div>
+
+
+
 
     <!-- Footer -->
     <footer class="app-footer">

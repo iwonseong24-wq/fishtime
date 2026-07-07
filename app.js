@@ -469,6 +469,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const moon = getMoonPhaseDetails(lunarAge);
 
+    // Sync active button in weekly bar
+    const selectedDateStr = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+    document.querySelectorAll('.weekly-btn').forEach(btn => {
+      if (btn.getAttribute('data-date') === selectedDateStr) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
     // --- 1. Yeongmok Port UI Render ---
     ymDateBadge.innerHTML = `${formattedDateStr} (${estLunarDayStr}) | <strong class="badge-tide">${tideIdx.name}</strong>`;
     ymMoonBadge.innerHTML = `${moon.svg}<span>${moon.name} (월령 ${moon.age}일)</span>`;
@@ -702,24 +712,200 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // iOS Safari Install Prompt Detection
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-  const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
-  
-  const iosModal = document.getElementById('ios-install-modal');
-  const closeIosModal = document.getElementById('close-install-modal');
-  
-  if (isIOS && !isStandalone) {
-    // Show iPhone install guide modal
-    if (iosModal) {
-      iosModal.classList.remove('hidden');
+
+
+  // --- 7. Generate 1-Week Quick Calendar Selector ---
+  function renderWeeklySelector() {
+    const weeklyContainer = document.getElementById('weekly-days-list');
+    if (!weeklyContainer) return;
+    
+    weeklyContainer.innerHTML = '';
+    
+    const today = new Date();
+    const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
+    
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+      
+      const tzOffset = date.getTimezoneOffset() * 60000;
+      const dateStr = new Date(date.getTime() - tzOffset).toISOString().split('T')[0];
+      
+      const dayNum = date.getDate();
+      const dayName = daysOfWeek[date.getDay()];
+      
+      // Calculate tide info for the button subtitle
+      const lAge = getLunarAge(date);
+      const tIdx = getTideIndex(lAge);
+      const tideNameShort = tIdx.baseName;
+      
+      const btn = document.createElement('button');
+      btn.className = 'weekly-btn';
+      btn.setAttribute('data-date', dateStr);
+      
+      // Highlight "오늘" (Today)
+      const dayLabel = i === 0 ? '오늘' : `${dayName}`;
+      
+      btn.innerHTML = `
+        <span class="btn-date">${dayNum}일 (${dayLabel})</span>
+        <span class="btn-tide">${tideNameShort}</span>
+      `;
+      
+      btn.addEventListener('click', () => {
+        selectedDate = new Date(dateStr + "T00:00:00+09:00");
+        dateInput.value = dateStr;
+        
+        // Update active class
+        document.querySelectorAll('.weekly-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        updateDashboard();
+      });
+      
+      weeklyContainer.appendChild(btn);
     }
   }
-  
-  if (closeIosModal && iosModal) {
-    closeIosModal.addEventListener('click', () => {
-      iosModal.classList.add('hidden');
+
+  // --- 8. Custom Calendar Layer Modal Logic ---
+  const calendarModal = document.getElementById('calendar-layer-modal');
+  const calendarTriggerBtn = document.getElementById('calendar-trigger-btn');
+  const calendarDaysGrid = document.getElementById('calendar-days-grid');
+  const calMonthTitle = document.getElementById('cal-month-title');
+  const calPrevMonth = document.getElementById('cal-prev-month');
+  const calNextMonth = document.getElementById('cal-next-month');
+  const calCloseBtn = document.getElementById('cal-close-btn');
+
+  let currentCalYear = selectedDate.getFullYear();
+  let currentCalMonth = selectedDate.getMonth();
+
+  function renderCalendarGrid() {
+    if (!calendarDaysGrid || !calMonthTitle) return;
+
+    calendarDaysGrid.innerHTML = '';
+    calMonthTitle.textContent = `${currentCalYear}년 ${String(currentCalMonth + 1).padStart(2, '0')}월`;
+
+    // First day weekday index (0: Sun, 1: Mon, etc.)
+    const firstDayIdx = new Date(currentCalYear, currentCalMonth, 1).getDay();
+    // Total days in current month
+    const daysInMonth = new Date(currentCalYear, currentCalMonth + 1, 0).getDate();
+    // Total days in previous month
+    const prevDaysInMonth = new Date(currentCalYear, currentCalMonth, 0).getDate();
+
+    // 1. Previous month trailing days
+    for (let i = firstDayIdx - 1; i >= 0; i--) {
+      const cell = document.createElement('div');
+      cell.className = 'cal-cell other-month';
+      const dNum = prevDaysInMonth - i;
+      cell.innerHTML = `<span class="cal-day-num">${dNum}</span>`;
+      calendarDaysGrid.appendChild(cell);
+    }
+
+    // 2. Current month days
+    const today = new Date();
+    for (let d = 1; d <= daysInMonth; d++) {
+      const cell = document.createElement('div');
+      cell.className = 'cal-cell';
+
+      const cellDate = new Date(currentCalYear, currentCalMonth, d);
+      const lAge = getLunarAge(cellDate);
+      const tIdx = getTideIndex(lAge);
+      const tideShort = tIdx.baseName; // E.g. "조금", "사리", "1물"
+
+      // Check selected state
+      const isSelected = selectedDate.getFullYear() === currentCalYear &&
+                         selectedDate.getMonth() === currentCalMonth &&
+                         selectedDate.getDate() === d;
+
+      // Check today state
+      const isTodayCell = today.getFullYear() === currentCalYear &&
+                          today.getMonth() === currentCalMonth &&
+                          today.getDate() === d;
+
+      if (isSelected) cell.classList.add('selected-cell');
+      if (isTodayCell) cell.classList.add('today-cell');
+
+      cell.innerHTML = `
+        <span class="cal-day-num">${d}</span>
+        <span class="cal-tide-label">${tideShort}</span>
+      `;
+
+      cell.addEventListener('click', () => {
+        selectedDate = new Date(currentCalYear, currentCalMonth, d, 0, 0, 0);
+        
+        // Sync native hidden input value
+        const tzOffset = selectedDate.getTimezoneOffset() * 60000;
+        const dateStr = new Date(selectedDate.getTime() - tzOffset).toISOString().split('T')[0];
+        dateInput.value = dateStr;
+
+        updateDashboard();
+        calendarModal.classList.add('hidden');
+      });
+
+      calendarDaysGrid.appendChild(cell);
+    }
+
+    // 3. Next month leading days (to fill 42 cells total)
+    const totalCells = firstDayIdx + daysInMonth;
+    const nextCellsNeeded = 42 - totalCells;
+    for (let i = 1; i <= nextCellsNeeded; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'cal-cell other-month';
+      cell.innerHTML = `<span class="cal-day-num">${i}</span>`;
+      calendarDaysGrid.appendChild(cell);
+    }
+  }
+
+  // Bind trigger click
+  if (calendarTriggerBtn) {
+    calendarTriggerBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      currentCalYear = selectedDate.getFullYear();
+      currentCalMonth = selectedDate.getMonth();
+      renderCalendarGrid();
+      calendarModal.classList.remove('hidden');
     });
   }
 
+  // Bind close triggers
+  if (calCloseBtn) {
+    calCloseBtn.addEventListener('click', () => {
+      calendarModal.classList.add('hidden');
+    });
+  }
+
+  // Close dropdown when clicking anywhere outside of it
+  document.addEventListener('click', (e) => {
+    if (calendarModal && !calendarModal.classList.contains('hidden')) {
+      if (!calendarModal.contains(e.target) && !calendarTriggerBtn.contains(e.target)) {
+        calendarModal.classList.add('hidden');
+      }
+    }
+  });
+
+  // Bind Month navigation
+  if (calPrevMonth) {
+    calPrevMonth.addEventListener('click', () => {
+      currentCalMonth--;
+      if (currentCalMonth < 0) {
+        currentCalMonth = 11;
+        currentCalYear--;
+      }
+      renderCalendarGrid();
+    });
+  }
+
+  if (calNextMonth) {
+    calNextMonth.addEventListener('click', () => {
+      currentCalMonth++;
+      if (currentCalMonth > 11) {
+        currentCalMonth = 0;
+        currentCalYear++;
+      }
+      renderCalendarGrid();
+    });
+  }
+
+  // Initial load
+  renderWeeklySelector();
   updateDashboard();
 });
