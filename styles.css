@@ -542,15 +542,71 @@ body {
   text-shadow: var(--shadow-low);
 }
 
+.tide-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  margin-bottom: 0.85rem;
+}
+
 .tide-type-badge {
-  align-self: flex-start;
   font-family: var(--font-display);
   font-size: 0.75rem;
   font-weight: 700;
   padding: 0.2rem 0.5rem;
   border-radius: 4px;
-  margin-bottom: 0.75rem;
   letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+/* Mini progress bar inside tide card */
+.tide-progress-mini {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.tide-progress-mini-bar {
+  flex: 1;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.tide-progress-mini-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+.high-tide-card .tide-progress-mini-fill {
+  background: var(--color-high-tide);
+  box-shadow: 0 0 8px var(--color-high-tide);
+}
+
+.low-tide-card .tide-progress-mini-fill {
+  background: var(--color-low-tide);
+  box-shadow: 0 0 8px var(--color-low-tide);
+}
+
+.tide-progress-mini-pct {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.high-tide-card .tide-progress-mini-pct {
+  color: #ff5e87;
+}
+
+.low-tide-card .tide-progress-mini-pct {
+  color: var(--color-low-tide);
 }
 
 .tide-time-giant {
@@ -877,11 +933,27 @@ body {
     font-size: 2.15rem;
   }
 
+  .tide-card-top {
+    gap: 0.35rem;
+    margin-bottom: 0.65rem;
+  }
+  
+  .tide-type-badge {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.35rem;
+  }
+  
+  .tide-progress-mini {
+    gap: 0.25rem;
+  }
+  
+  .tide-progress-mini-pct {
+    font-size: 0.75rem;
+  }
+
   .active-focus-badge {
     font-size: 0.55rem;
     padding: 0.15rem 0.35rem;
-    top: 0.5rem;
-    right: 0.5rem;
   }
   
   .secondary-layout-container {
@@ -965,9 +1037,7 @@ body {
 }
 
 .active-focus-badge {
-  position: absolute;
-  top: 1.1rem;
-  right: 1.1rem;
+  position: static;
   font-size: 0.7rem;
   font-weight: 800;
   display: flex;
@@ -977,6 +1047,7 @@ body {
   border-radius: 4px;
   animation: pulseText 1.5s ease-in-out infinite alternate;
   letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 
 .high-tide-card .active-focus-badge {

@@ -657,24 +657,56 @@ document.addEventListener('DOMContentLoaded', () => {
         cardClass += isFocused ? ' active-tide' : ' inactive-tide';
       }
       
-      const typeLabel = isHigh ? '만조 (High)' : '간조 (Low)';
+      const typeLabel = isHigh ? '만조' : '간조';
       const arrow = isHigh ? '▲' : '▼';
       
       const tideCard = document.createElement('div');
       tideCard.className = cardClass;
       
-      let focusBadgeHTML = '';
+      let progressHTML = '';
+      
       if (isFocused) {
-        focusBadgeHTML = `<div class="active-focus-badge"><i data-lucide="waves" style="width:13px;height:13px;display:inline-block;vertical-align:middle;"></i> 진행중 (타깃)</div>`;
+        // Calculate progress percentage relative to previous tide event
+        const now = new Date();
+        const currHour = now.getHours() + now.getMinutes() / 60;
+        let prevHour = 0;
+        if (i > 0) {
+          prevHour = tides[i - 1].timeHour;
+        } else {
+          prevHour = t.timeHour - 6.1; // Estimate last event 6 hours ago
+        }
+        
+        const totalDuration = t.timeHour - prevHour;
+        const elapsed = currHour - prevHour;
+        let progressPct = 0;
+        if (totalDuration > 0) {
+          progressPct = Math.max(0, Math.min(100, Math.round((elapsed / totalDuration) * 100)));
+        }
+        
+        progressHTML = `
+          <div class="tide-progress-mini">
+            <div class="tide-progress-mini-bar">
+              <div class="tide-progress-mini-fill" style="width: ${progressPct}%;"></div>
+            </div>
+            <span class="tide-progress-mini-pct">${progressPct}%</span>
+          </div>
+        `;
       }
       
       tideCard.innerHTML = `
-        <div class="tide-type-badge">${typeLabel}</div>
-        ${focusBadgeHTML}
+        <div class="tide-card-top">
+          <div class="tide-type-badge">${typeLabel}</div>
+          ${progressHTML}
+        </div>
         <div class="tide-time-giant">${arrow} ${t.timeStr}</div>
       `;
       container.appendChild(tideCard);
     });
+    
+    // Update Lucide icons for injected waves icon
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
   }
 
   function renderCompactTides(container, tides, activeIndex) {
