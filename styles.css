@@ -285,16 +285,14 @@ body {
 
 .primary-layout-grid {
   display: grid;
-  grid-template-columns: 360px 1fr;
+  grid-template-columns: 1fr;
   gap: 2rem;
-  padding: 2rem;
+  padding: 1.5rem 2rem;
 }
 
-/* Left block: water gauge & weather details */
+/* Left block: water gauge & weather details (Hidden) */
 .info-block-left {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  display: none !important;
 }
 
 /* Water Level cylinder */
@@ -374,10 +372,7 @@ body {
 }
 
 .gauge-footer {
-  text-align: center;
-  font-size: 0.85rem;
-  font-weight: 700;
-  margin-top: 0.75rem;
+  display: none;
 }
 
 .status-rising {
@@ -870,11 +865,23 @@ body {
   }
   
   .tide-readout-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.65rem;
   }
   
-  .tide-height {
-    font-size: 2.5rem;
+  .tide-item-card {
+    padding: 1.15rem 0.85rem;
+  }
+
+  .tide-time-giant {
+    font-size: 2.15rem;
+  }
+
+  .active-focus-badge {
+    font-size: 0.55rem;
+    padding: 0.15rem 0.35rem;
+    top: 0.5rem;
+    right: 0.5rem;
   }
   
   .secondary-layout-container {
@@ -1561,4 +1568,21 @@ body {
 
 .cal-cell.selected-cell .cal-tide-label {
   color: #ffffff;
+}
+
+/* Hide real-time gauge cylinder, progress timelines, tide coefficient cards, and block titles */
+.gauge-container {
+  display: none !important;
+}
+
+.tide-progress-container {
+  display: none !important;
+}
+
+.tide-coefficient-card {
+  display: none !important;
+}
+
+.block-title {
+  display: none !important;
 }
