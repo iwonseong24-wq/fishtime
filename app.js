@@ -698,7 +698,10 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="tide-type-badge">${typeLabel}</div>
           ${progressHTML}
         </div>
-        <div class="tide-time-giant">${t.timeStr}</div>
+        <div class="tide-card-body">
+          <div class="tide-time-giant">${t.timeStr}</div>
+          <div class="tide-direction-arrow">${arrow}</div>
+        </div>
       `;
       container.appendChild(tideCard);
     });
