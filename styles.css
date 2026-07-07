@@ -1,0 +1,1283 @@
+/* ==========================================================================
+   Design System & Style Variables (Ocean Marine Theme)
+   ========================================================================== */
+:root {
+  --bg-darkest: #040814;
+  --bg-darker: #090e1f;
+  --bg-card: rgba(13, 22, 47, 0.7);
+  --bg-card-hover: rgba(18, 30, 64, 0.85);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-glow: rgba(0, 229, 255, 0.25);
+  
+  --color-primary: #00f2fe;     /* Aqua Neon */
+  --color-secondary: #0072ff;   /* Ocean Blue */
+  --color-high-tide: #ff3366;   /* Crimson Coral (High Tide) */
+  --color-low-tide: #00e5ff;    /* Cyan Neon (Low Tide) */
+  --color-text-main: #f3f4f6;
+  --color-text-muted: #8e9bb4;
+  
+  --font-display: 'Outfit', 'Noto Sans KR', -apple-system, sans-serif;
+  --font-body: 'Inter', 'Noto Sans KR', -apple-system, sans-serif;
+  
+  --shadow-main: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+  --shadow-high: 0 0 15px rgba(255, 51, 102, 0.3);
+  --shadow-low: 0 0 15px rgba(0, 229, 255, 0.3);
+  
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 24px;
+  
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* ==========================================================================
+   Base reset & layout
+   ========================================================================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-darkest);
+  color: var(--color-text-main);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Nautical glowing backgrounds */
+.ocean-glow {
+  position: fixed;
+  top: -10vw;
+  right: -5vw;
+  width: 45vw;
+  height: 45vw;
+  background: radial-gradient(circle, rgba(0, 242, 254, 0.12) 0%, transparent 70%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.ocean-glow-2 {
+  position: fixed;
+  bottom: -15vw;
+  left: -10vw;
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, rgba(0, 114, 255, 0.1) 0%, transparent 70%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  gap: 2rem;
+}
+
+/* ==========================================================================
+   Header Styling
+   ========================================================================== */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logo-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #040814;
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.35);
+  animation: pulseLogo 3s ease-in-out infinite alternate;
+}
+
+@keyframes pulseLogo {
+  0% { transform: scale(1); box-shadow: 0 0 15px rgba(0, 242, 254, 0.35); }
+  100% { transform: scale(1.05); box-shadow: 0 0 25px rgba(0, 242, 254, 0.6); }
+}
+
+.logo-icon i {
+  width: 28px;
+  height: 28px;
+  stroke-width: 2.2;
+}
+
+.header-left h1 {
+  font-family: var(--font-display);
+  font-size: 1.85rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.header-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  background: rgba(0, 242, 254, 0.12);
+  border: 1px solid rgba(0, 242, 254, 0.3);
+  color: var(--color-primary);
+  letter-spacing: 0.05em;
+}
+
+.subtitle {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  margin-top: 0.15rem;
+}
+
+/* Glassmorphic date selector card */
+.header-right.card {
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-md);
+  border-color: var(--border-color);
+  background: var(--bg-card);
+}
+
+.date-selector-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.date-icon {
+  color: var(--color-primary);
+  width: 20px;
+  height: 20px;
+}
+
+.date-selector-wrapper input[type="date"] {
+  background: transparent;
+  border: none;
+  color: var(--color-text-main);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Custom calendar icon color in some webkit browsers */
+.date-selector-wrapper input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) sepia(50%) saturate(1000%) hue-rotate(150deg);
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   Card Structure (Glassmorphism)
+   ========================================================================== */
+.card {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-main);
+  transition: border-color var(--transition-normal), transform var(--transition-normal);
+}
+
+.card:hover {
+  border-color: var(--border-glow);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 1.25rem 1.75rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* Live status marker */
+.status-indicator {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--color-text-muted);
+}
+
+.status-indicator.live {
+  background: rgba(0, 230, 118, 0.1);
+  border-color: rgba(0, 230, 118, 0.3);
+  color: #00e676;
+}
+
+.port-name {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-top: 0.25rem;
+}
+
+.port-eng {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--color-text-muted);
+  margin-left: 0.35rem;
+}
+
+.port-location-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-top: 0.25rem;
+}
+
+.port-location-tag i {
+  width: 12px;
+  height: 12px;
+}
+
+.date-tide-badge {
+  background: rgba(0, 242, 254, 0.06);
+  border: 1px solid rgba(0, 242, 254, 0.15);
+  color: var(--color-primary);
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.45rem 1rem;
+  border-radius: 30px;
+}
+
+/* ==========================================================================
+   Primary Area Layout: Yeongmok Port
+   ========================================================================== */
+.primary-card {
+  width: 100%;
+}
+
+.primary-layout-grid {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+/* Left block: water gauge & weather details */
+.info-block-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Water Level cylinder */
+.gauge-container.card {
+  padding: 1.25rem;
+  background: rgba(5, 8, 20, 0.4);
+}
+
+.gauge-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  margin-bottom: 0.85rem;
+}
+
+.gauge-time {
+  color: var(--color-primary);
+}
+
+.water-cylinder {
+  width: 100%;
+  height: 90px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1.5px solid rgba(255, 255, 255, 0.05);
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 4px 15px rgba(0,0,0,0.6);
+}
+
+.water-wave {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(180deg, #00e5ff 0%, #0051a8 100%);
+  transition: height 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* wave shape effect via rotating circle mask overlay */
+.wave-bg {
+  position: absolute;
+  width: 200%;
+  height: 250px;
+  background: #0d162f; /* matches container card color */
+  border-radius: 41%;
+  top: -241px;
+  left: -50%;
+  animation: waveRotate 12s linear infinite;
+  pointer-events: none;
+  opacity: 0.95;
+}
+
+@keyframes waveRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.water-percent-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(0,0,0,0.95), 0 2px 4px rgba(0,0,0,0.95);
+  z-index: 6;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.gauge-footer {
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-top: 0.75rem;
+}
+
+.status-rising {
+  color: var(--color-high-tide);
+}
+
+.status-falling {
+  color: var(--color-primary);
+}
+
+/* Weather details block */
+.weather-sub-panel.card {
+  padding: 1.25rem;
+  background: rgba(5, 8, 20, 0.4);
+}
+
+.weather-row-main {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.weather-icon-wrapper {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+}
+
+.weather-icon-wrapper i {
+  width: 30px;
+  height: 30px;
+}
+
+.weather-temp-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.temp-val {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.weather-desc {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.weather-grid-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 1rem;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.detail-label {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.detail-label i {
+  width: 12px;
+  height: 12px;
+}
+
+.detail-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* Right block: GIANT readouts for 만조 / 간조 */
+.tide-block-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.block-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 0.75rem;
+}
+
+.block-title i {
+  color: var(--color-primary);
+  width: 20px;
+  height: 20px;
+}
+
+.title-sub {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
+/* Giant readouts */
+.tide-readout-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.tide-item-card {
+  border-radius: var(--radius-md);
+  padding: 1.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+/* High Tide visual indicators (CRIMSON) */
+.tide-item-card.high-tide-card {
+  background: linear-gradient(135deg, rgba(255, 51, 102, 0.15) 0%, rgba(255, 51, 102, 0.02) 100%);
+  border-left: 4px solid var(--color-high-tide);
+}
+
+.high-tide-card .tide-type-badge {
+  color: var(--color-high-tide);
+  background: rgba(255, 51, 102, 0.1);
+  border: 1px solid rgba(255, 51, 102, 0.2);
+}
+
+.high-tide-card .tide-height {
+  color: #ff5e87;
+  text-shadow: var(--shadow-high);
+}
+
+/* Low Tide visual indicators (CYAN) */
+.tide-item-card.low-tide-card {
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.15) 0%, rgba(0, 229, 255, 0.02) 100%);
+  border-left: 4px solid var(--color-low-tide);
+}
+
+.low-tide-card .tide-type-badge {
+  color: var(--color-low-tide);
+  background: rgba(0, 229, 255, 0.1);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+}
+
+.low-tide-card .tide-height {
+  color: var(--color-low-tide);
+  text-shadow: var(--shadow-low);
+}
+
+.tide-type-badge {
+  align-self: flex-start;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.tide-time-giant {
+  font-family: var(--font-display);
+  font-size: 4.0rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  margin-top: 0.15rem;
+  line-height: 1.1;
+}
+
+.high-tide-card .tide-time-giant {
+  color: #ff5e87;
+  text-shadow: var(--shadow-high);
+}
+
+.low-tide-card .tide-time-giant {
+  color: var(--color-low-tide);
+  text-shadow: var(--shadow-low);
+}
+
+/* Tide Coefficient */
+.tide-coefficient-card.card {
+  padding: 1.25rem;
+  background: rgba(5, 8, 20, 0.4);
+}
+
+.coef-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  margin-bottom: 0.6rem;
+}
+
+.coef-val {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.coef-bar-wrapper {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.85rem;
+}
+
+.coef-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-secondary) 0%, var(--color-primary) 100%);
+  border-radius: 4px;
+  box-shadow: 0 0 10px var(--color-primary);
+  transition: width 0.6s ease;
+}
+
+.coef-help {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  line-height: 1.45;
+  display: flex;
+  gap: 0.35rem;
+}
+
+.coef-help i {
+  width: 14px;
+  height: 14px;
+  color: var(--color-primary);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ==========================================================================
+   Secondary Area Layout: Muuido & Sokcho
+   ========================================================================== */
+.secondary-row-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.secondary-card {
+  width: 100%;
+}
+
+.port-name-sm {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.port-eng-sm {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--color-text-muted);
+  margin-left: 0.25rem;
+}
+
+.date-tide-badge-sm {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--color-text-muted);
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+}
+
+.secondary-layout-container {
+  display: grid;
+  grid-template-columns: 75px 1fr;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  align-items: center;
+}
+
+/* Small Gauge */
+.water-cylinder-sm {
+  width: 100%;
+  height: 160px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 4px 10px rgba(0,0,0,0.6);
+}
+
+.water-percent-text-sm {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 0 4px;
+}
+
+/* Compact Tide Readouts row */
+.tide-readout-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tide-item-card-sm {
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  border: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.tide-item-card-sm.high-tide-card-sm {
+  background: linear-gradient(90deg, rgba(255, 51, 102, 0.1) 0%, rgba(255, 51, 102, 0.01) 100%);
+  border-left: 3px solid var(--color-high-tide);
+}
+
+.tide-item-card-sm.low-tide-card-sm {
+  background: linear-gradient(90deg, rgba(0, 229, 255, 0.1) 0%, rgba(0, 229, 255, 0.01) 100%);
+  border-left: 3px solid var(--color-low-tide);
+}
+
+.tide-item-card-sm .type {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.tide-item-card-sm.high-tide-card-sm .time-sm-giant {
+  color: #ff5e87;
+  font-size: 2.1rem;
+  font-weight: 900;
+  text-shadow: var(--shadow-high);
+}
+
+.tide-item-card-sm.low-tide-card-sm .time-sm-giant {
+  color: var(--color-low-tide);
+  font-size: 2.1rem;
+  font-weight: 900;
+  text-shadow: var(--shadow-low);
+}
+
+/* Compact Weather details */
+.weather-row-sm.card {
+  grid-column: span 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.65rem 1.25rem;
+  background: rgba(5, 8, 20, 0.4);
+  border-radius: var(--radius-md);
+  margin-top: 0.25rem;
+}
+
+.weather-info-sm {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.weather-info-sm i {
+  color: var(--color-primary);
+  width: 18px;
+  height: 18px;
+}
+
+.weather-info-sm .temp {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.wind-info-sm {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+.app-footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.footer-alert {
+  font-size: 0.75rem;
+  color: var(--color-high-tide);
+  opacity: 0.8;
+  margin-top: 0.5rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Helper Utilities */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+@media (max-width: 992px) {
+  .primary-layout-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .info-block-left {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  
+  .gauge-container.card, .weather-sub-panel.card {
+    flex: 1;
+    min-width: 280px;
+  }
+}
+
+@media (max-width: 800px) {
+  .secondary-row-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .app-container {
+    padding: 1rem 0.75rem;
+  }
+  
+  .app-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .header-right.card {
+    width: 100%;
+  }
+  
+  .date-selector-wrapper {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .card-header {
+    padding: 1rem;
+  }
+  
+  .primary-layout-grid {
+    padding: 1rem;
+  }
+  
+  .tide-readout-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .tide-height {
+    font-size: 2.5rem;
+  }
+  
+  .secondary-layout-container {
+    padding: 1rem;
+  }
+}
+
+/* ==========================================================================
+   Lunar Age & Moon Phase Badges
+   ========================================================================== */
+.moon-phase-badge {
+  background: rgba(255, 210, 105, 0.08);
+  border: 1px solid rgba(255, 210, 105, 0.25);
+  color: #ffd269;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.4rem 0.9rem;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  box-shadow: 0 0 10px rgba(255, 210, 105, 0.05);
+}
+
+.moon-phase-badge-sm {
+  background: rgba(255, 210, 105, 0.05);
+  border: 1px solid rgba(255, 210, 105, 0.15);
+  color: #ffd269;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* ==========================================================================
+   Tide Focus / Highlight (Active/Upcoming Tide Target)
+   ========================================================================== */
+.tide-item-card {
+  transition: transform var(--transition-normal), border-color var(--transition-normal), opacity var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.tide-item-card.inactive-tide {
+  opacity: 0.48;
+}
+
+.tide-item-card.inactive-tide:hover {
+  opacity: 0.85;
+}
+
+.tide-item-card.active-tide {
+  transform: scale(1.035);
+  z-index: 5;
+  border-width: 1.8px;
+}
+
+.tide-item-card.active-tide.high-tide-card {
+  border-color: var(--color-high-tide);
+  box-shadow: 0 0 20px rgba(255, 51, 102, 0.3);
+  animation: pulseHigh 2s infinite alternate;
+}
+
+.tide-item-card.active-tide.low-tide-card {
+  border-color: var(--color-low-tide);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+  animation: pulseLow 2s infinite alternate;
+}
+
+@keyframes pulseHigh {
+  0% { box-shadow: 0 0 10px rgba(255, 51, 102, 0.2); }
+  100% { box-shadow: 0 0 25px rgba(255, 51, 102, 0.5); }
+}
+
+@keyframes pulseLow {
+  0% { box-shadow: 0 0 10px rgba(0, 229, 255, 0.2); }
+  100% { box-shadow: 0 0 25px rgba(0, 229, 255, 0.5); }
+}
+
+.active-focus-badge {
+  position: absolute;
+  top: 1.1rem;
+  right: 1.1rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  animation: pulseText 1.5s ease-in-out infinite alternate;
+  letter-spacing: 0.02em;
+}
+
+.high-tide-card .active-focus-badge {
+  background: rgba(255, 51, 102, 0.12);
+  color: #ff5e87;
+  border: 1px solid rgba(255, 51, 102, 0.3);
+}
+
+.low-tide-card .active-focus-badge {
+  background: rgba(0, 229, 255, 0.12);
+  color: var(--color-low-tide);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+}
+
+@keyframes pulseText {
+  0% { opacity: 0.75; }
+  100% { opacity: 1; transform: scale(1.015); }
+}
+
+/* Compact Active rows */
+.tide-item-card-sm {
+  transition: transform 0.25s ease, opacity 0.25s ease, border-color 0.25s ease;
+}
+
+.tide-item-card-sm.inactive-tide-sm {
+  opacity: 0.48;
+}
+
+.tide-item-card-sm.inactive-tide-sm:hover {
+  opacity: 0.85;
+}
+
+.tide-item-card-sm.active-tide-sm {
+  transform: scale(1.02);
+  border-width: 1.5px;
+}
+
+.tide-item-card-sm.active-tide-sm.high-tide-card-sm {
+  border-color: var(--color-high-tide);
+  box-shadow: 0 0 12px rgba(255, 51, 102, 0.15);
+}
+
+.tide-item-card-sm.active-tide-sm.low-tide-card-sm {
+  border-color: var(--color-low-tide);
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.15);
+}
+
+/* ==========================================================================
+   iOS PWA Install Modal Overlay
+   ========================================================================== */
+.ios-install-overlay {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 1.25rem;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  animation: slideUpModal 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+@keyframes slideUpModal {
+  0% { transform: translateY(100%); }
+  100% { transform: translateY(0); }
+}
+
+.ios-install-overlay.hidden {
+  display: none !important;
+}
+
+.ios-install-card {
+  pointer-events: auto;
+  max-width: 500px;
+  width: 100%;
+  background: rgba(8, 14, 30, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 210, 105, 0.2);
+  border-radius: var(--radius-md);
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.7);
+  padding: 1.25rem;
+  color: var(--color-text-main);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.modal-header-ios {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.app-info-ios {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.app-logo-mini {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 210, 105, 0.3);
+}
+
+.app-info-ios h3 {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #ffd269;
+}
+
+.app-info-ios p {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-top: 0.15rem;
+}
+
+.close-btn-ios {
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 1.5rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 0.25rem;
+  transition: color 0.2s ease;
+}
+
+.close-btn-ios:hover {
+  color: #ffffff;
+}
+
+.install-steps-ios {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 0.75rem;
+}
+
+.step-ios {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.step-num-ios {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(255, 210, 105, 0.15);
+  border: 1px solid rgba(255, 210, 105, 0.4);
+  color: #ffd269;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.step-ios p {
+  color: var(--color-text-main);
+  line-height: 1.45;
+}
+
+.share-icon-placeholder-ios {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.15rem 0.35rem;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0.15rem;
+}
+
+/* ==========================================================================
+   Dashboard Grid Container Spacing
+   ========================================================================== */
+.dashboard-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+/* ==========================================================================
+   Infographics: Cylinder Ticks & Progress Timelines
+   ========================================================================== */
+.water-cylinder {
+  position: relative;
+}
+
+.cylinder-ticks {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 4; /* Overlay on top of waves */
+  pointer-events: none;
+}
+
+.cylinder-ticks .tick {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.12);
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 0.65rem;
+  height: 0;
+}
+
+.cylinder-ticks .tick span {
+  font-size: 0.625rem;
+  color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-50%);
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+.tide-progress-container.card {
+  padding: 1rem 1.25rem;
+  background: rgba(5, 8, 20, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.progress-title {
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.progress-percent {
+  color: #ffd269; /* Gold */
+  font-weight: 700;
+  font-family: var(--font-display);
+}
+
+.progress-bar-track {
+  position: relative;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  margin: 0.35rem 0;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary) 0%, #ffd269 100%);
+  border-radius: 10px;
+  width: 0%;
+  transition: width 0.5s ease;
+}
+
+.progress-pointer {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  background: #ffd269;
+  border: 3px solid #050814;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 8px rgba(255, 210, 105, 0.7);
+  transition: left 0.5s ease;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.725rem;
+  font-weight: 600;
+}
+
+.label-prev {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.label-next {
+  color: #ffffff;
+}
+
+.progress-desc {
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 0.5rem;
+  margin-top: 0.15rem;
+}
+
+.progress-desc strong {
+  color: #ffffff;
+  font-weight: 700;
+}

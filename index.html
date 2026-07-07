@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>바다로그 - 실시간 바다 물때표 및 해양 예보</title>
+  
+  <!-- PWA Manifest & iOS native support -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="바다로그">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Ambient ocean background glowing highlights -->
+  <div class="ocean-glow"></div>
+  <div class="ocean-glow-2"></div>
+
+  <div class="app-container">
+    
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="logo-icon">
+          <i data-lucide="compass"></i>
+        </div>
+        <div>
+          <h1>바다로그 <span class="header-badge">TideCast</span></h1>
+          <p class="subtitle">실시간 바다 물때표 및 기상 예보 서비스</p>
+        </div>
+      </div>
+      
+      <!-- Date Selector Control -->
+      <div class="header-right card">
+        <div class="date-selector-wrapper">
+          <i data-lucide="calendar" class="date-icon"></i>
+          <label for="target-date" class="sr-only">조회 날짜 선택</label>
+          <input type="date" id="target-date">
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Grid Dashboard -->
+    <main class="dashboard-grid">
+      
+      <!-- ====================================================================
+           PRIMARY AREA: Yeongmok Port (영목항) - Large top container
+           ==================================================================== -->
+      <section id="yeongmok-section" class="card primary-card">
+        <div class="card-header">
+          <div class="port-info">
+            <span class="status-indicator live">LIVE</span>
+            <h2 class="port-name">영목항 <span class="port-eng">Yeongmok Port</span></h2>
+            <span class="port-location-tag"><i data-lucide="map-pin"></i> 충남 태안군 고남면</span>
+          </div>
+          <div class="header-badges-group" style="display: flex; gap: 0.65rem; align-items: center; flex-wrap: wrap;">
+            <div class="date-tide-badge" id="ym-date-badge">로딩 중...</div>
+            <div class="moon-phase-badge" id="ym-moon-badge"></div>
+          </div>
+        </div>
+
+        <div class="primary-layout-grid">
+          
+          <!-- Column 1: Live Water Level Indicator & Weather -->
+          <div class="info-block-left">
+            <!-- Dynamic Water level cylinder gauge -->
+            <div class="gauge-container card">
+              <div class="gauge-header">
+                <span>실시간 조석 게이지</span>
+                <span class="gauge-time" id="ym-gauge-time">10:00 기준</span>
+              </div>
+              <div class="water-cylinder">
+                <!-- Infographic Tick Marks -->
+                <div class="cylinder-ticks">
+                  <div class="tick" style="bottom: 90%;"><span>만조 (100%)</span></div>
+                  <div class="tick" style="bottom: 75%;"><span>75%</span></div>
+                  <div class="tick" style="bottom: 50%;"><span>50%</span></div>
+                  <div class="tick" style="bottom: 25%;"><span>25%</span></div>
+                  <div class="tick" style="bottom: 10%;"><span>간조 (0%)</span></div>
+                </div>
+                <!-- Animate wave using css -->
+                <div class="water-wave" id="ym-water-wave" style="height: 50%;">
+                  <div class="wave-bg"></div>
+                </div>
+                <span class="water-percent-text" id="ym-water-height">조위 분석중</span>
+              </div>
+              <div class="gauge-footer">
+                <span id="ym-gauge-status" class="status-rising">로딩 중...</span>
+              </div>
+            </div>
+
+            <!-- Tide progress timeline card -->
+            <div class="tide-progress-container card">
+              <div class="progress-header">
+                <span class="progress-title"><i data-lucide="compass"></i> 실시간 조류 흐름</span>
+                <span class="progress-percent" id="ym-progress-pct">진행률 --%</span>
+              </div>
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" id="ym-progress-bar" style="width: 0%;"></div>
+                <div class="progress-pointer" id="ym-progress-pointer" style="left: 0%;"></div>
+              </div>
+              <div class="progress-labels">
+                <span class="label-prev" id="ym-progress-prev">이전 --:--</span>
+                <span class="label-next" id="ym-progress-next">다음 --:--</span>
+              </div>
+              <div class="progress-desc" id="ym-progress-desc">물때 이동 정보 계산 중...</div>
+            </div>
+
+            <!-- Weather Details -->
+            <div class="weather-sub-panel card">
+              <div class="weather-row-main">
+                <div class="weather-icon-wrapper" id="ym-weather-icon">
+                  <i data-lucide="cloud-sun" class="icon-lg"></i>
+                </div>
+                <div class="weather-temp-block">
+                  <span class="temp-val" id="ym-temp">24.2°C</span>
+                  <span class="weather-desc" id="ym-weather-desc">구름 조금</span>
+                </div>
+              </div>
+              <div class="weather-grid-details">
+                <div class="detail-item">
+                  <span class="detail-label"><i data-lucide="wind"></i> 풍속/풍향</span>
+                  <span class="detail-value" id="ym-wind">↖ 3.5 m/s</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label"><i data-lucide="droplets"></i> 습도</span>
+                  <span class="detail-value" id="ym-humidity">82%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 2: GIANT High / Low Tide Details (제일 크게 보여주기) -->
+          <div class="tide-block-right">
+            <h3 class="block-title"><i data-lucide="chevrons-up-down"></i> 만조 / 간조 시간표 <span class="title-sub">(조석 정보 기준)</span></h3>
+            
+            <div class="tide-readout-grid" id="ym-tide-readouts">
+              <!-- Dynamically populated, featuring massive high/low indicators -->
+              <div class="tide-item-card high-tide-card">
+                <div class="tide-type-badge">만조 (High)</div>
+                <div class="tide-time-giant">▲ --:--</div>
+              </div>
+              <div class="tide-item-card low-tide-card">
+                <div class="tide-type-badge">간조 (Low)</div>
+                <div class="tide-time-giant">▼ --:--</div>
+              </div>
+            </div>
+
+            <!-- Tide Index chart info -->
+            <div class="tide-coefficient-card card">
+              <div class="coef-header">
+                <span>물때 계수 (Tide Coefficient)</span>
+                <span class="coef-val" id="ym-coef-val">98 (사리)</span>
+              </div>
+              <div class="coef-bar-wrapper">
+                <div class="coef-bar-fill" id="ym-coef-bar" style="width: 85%;"></div>
+              </div>
+              <p class="coef-help"><i data-lucide="help-circle"></i> 사리(물때수치 높음) 기간에는 조석 간만의 차가 크고 유속이 빨라집니다. 조금 기간에는 유속이 느려집니다.</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           SECONDARY AREA: Muuido (무의도) - Large container
+           ==================================================================== -->
+      <section id="muuido-section" class="card primary-card">
+        <div class="card-header">
+          <div class="port-info">
+            <span class="status-indicator">TIDE</span>
+            <h2 class="port-name">무의도 <span class="port-eng">Muuido</span></h2>
+            <span class="port-location-tag"><i data-lucide="map-pin"></i> 인천 중구 무의동</span>
+          </div>
+          <div class="header-badges-group" style="display: flex; gap: 0.65rem; align-items: center; flex-wrap: wrap;">
+            <div class="date-tide-badge" id="mu-tide-badge">로딩 중...</div>
+            <div class="moon-phase-badge" id="mu-moon-badge"></div>
+          </div>
+        </div>
+
+        <div class="primary-layout-grid">
+          
+          <!-- Column 1: Live Water Level Indicator & Weather -->
+          <div class="info-block-left">
+            <!-- Dynamic Water level cylinder gauge -->
+            <!-- Dynamic Water level cylinder gauge -->
+            <div class="gauge-container card">
+              <div class="gauge-header">
+                <span>실시간 조석 게이지</span>
+                <span class="gauge-time" id="mu-gauge-time">10:00 기준</span>
+              </div>
+              <div class="water-cylinder">
+                <!-- Infographic Tick Marks -->
+                <div class="cylinder-ticks">
+                  <div class="tick" style="bottom: 90%;"><span>만조 (100%)</span></div>
+                  <div class="tick" style="bottom: 75%;"><span>75%</span></div>
+                  <div class="tick" style="bottom: 50%;"><span>50%</span></div>
+                  <div class="tick" style="bottom: 25%;"><span>25%</span></div>
+                  <div class="tick" style="bottom: 10%;"><span>간조 (0%)</span></div>
+                </div>
+                <!-- Animate wave using css -->
+                <div class="water-wave" id="mu-water-wave" style="height: 50%;">
+                  <div class="wave-bg"></div>
+                </div>
+                <span class="water-percent-text" id="mu-water-height">조위 분석중</span>
+              </div>
+              <div class="gauge-footer">
+                <span id="mu-gauge-status" class="status-rising">로딩 중...</span>
+              </div>
+            </div>
+
+            <!-- Tide progress timeline card -->
+            <div class="tide-progress-container card">
+              <div class="progress-header">
+                <span class="progress-title"><i data-lucide="compass"></i> 실시간 조류 흐름</span>
+                <span class="progress-percent" id="mu-progress-pct">진행률 --%</span>
+              </div>
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" id="mu-progress-bar" style="width: 0%;"></div>
+                <div class="progress-pointer" id="mu-progress-pointer" style="left: 0%;"></div>
+              </div>
+              <div class="progress-labels">
+                <span class="label-prev" id="mu-progress-prev">이전 --:--</span>
+                <span class="label-next" id="mu-progress-next">다음 --:--</span>
+              </div>
+              <div class="progress-desc" id="mu-progress-desc">물때 이동 정보 계산 중...</div>
+            </div>
+
+            <!-- Weather Details -->
+            <div class="weather-sub-panel card">
+              <div class="weather-row-main">
+                <div class="weather-icon-wrapper" id="mu-weather-icon">
+                  <i data-lucide="cloud-sun" class="icon-lg"></i>
+                </div>
+                <div class="weather-temp-block">
+                  <span class="temp-val" id="mu-temp">--°C</span>
+                  <span class="weather-desc" id="mu-weather-desc">로딩 중...</span>
+                </div>
+              </div>
+              <div class="weather-grid-details">
+                <div class="detail-item">
+                  <span class="detail-label"><i data-lucide="wind"></i> 풍속/풍향</span>
+                  <span class="detail-value" id="mu-wind">--</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label"><i data-lucide="droplets"></i> 습도</span>
+                  <span class="detail-value" id="mu-humidity">--%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 2: GIANT High / Low Tide Details -->
+          <div class="tide-block-right">
+            <h3 class="block-title"><i data-lucide="chevrons-up-down"></i> 만조 / 간조 시간표 <span class="title-sub">(조석 정보 기준)</span></h3>
+            
+            <div class="tide-readout-grid" id="mu-tide-readouts">
+              <div class="tide-item-card high-tide-card">
+                <div class="tide-type-badge">만조 (High)</div>
+                <div class="tide-time-giant">▲ --:--</div>
+              </div>
+              <div class="tide-item-card low-tide-card">
+                <div class="tide-type-badge">간조 (Low)</div>
+                <div class="tide-time-giant">▼ --:--</div>
+              </div>
+            </div>
+
+            <!-- Tide Index chart info -->
+            <div class="tide-coefficient-card card">
+              <div class="coef-header">
+                <span>물때 계수 (Tide Coefficient)</span>
+                <span class="coef-val" id="mu-coef-val">--</span>
+              </div>
+              <div class="coef-bar-wrapper">
+                <div class="coef-bar-fill" id="mu-coef-bar" style="width: 0%;"></div>
+              </div>
+              <p class="coef-help"><i data-lucide="help-circle"></i> 사리(물때수치 높음) 기간에는 조석 간만의 차가 크고 유속이 빨라집니다. 조금 기간에는 유속이 느려집니다.</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           SECONDARY AREA: Sokcho Port (속초항) - Large container
+           ==================================================================== -->
+      <section id="sokcho-section" class="card primary-card">
+        <div class="card-header">
+          <div class="port-info">
+            <span class="status-indicator">TIDE</span>
+            <h2 class="port-name">속초항 <span class="port-eng">Sokcho Port</span></h2>
+            <span class="port-location-tag"><i data-lucide="map-pin"></i> 강원 속초시 동명동</span>
+          </div>
+          <div class="header-badges-group" style="display: flex; gap: 0.65rem; align-items: center; flex-wrap: wrap;">
+            <div class="date-tide-badge" id="sk-tide-badge">로딩 중...</div>
+            <div class="moon-phase-badge" id="sk-moon-badge"></div>
+          </div>
+        </div>
+
+        <div class="primary-layout-grid">
+          
+          <!-- Column 1: Live Water Level Indicator & Weather -->
+          <div class="info-block-left">
+            <!-- Dynamic Water level cylinder gauge -->
+            <div class="gauge-container card">
+              <div class="gauge-header">
+                <span>실시간 조석 게이지</span>
+                <span class="gauge-time" id="sk-gauge-time">10:00 기준</span>
+              </div>
+              <div class="water-cylinder">
+                <!-- Infographic Tick Marks -->
+                <div class="cylinder-ticks">
+                  <div class="tick" style="bottom: 90%;"><span>만조 (100%)</span></div>
+                  <div class="tick" style="bottom: 75%;"><span>75%</span></div>
+                  <div class="tick" style="bottom: 50%;"><span>50%</span></div>
+                  <div class="tick" style="bottom: 25%;"><span>25%</span></div>
+                  <div class="tick" style="bottom: 10%;"><span>간조 (0%)</span></div>
+                </div>
+                <!-- Animate wave using css -->
+                <div class="water-wave" id="sk-water-wave" style="height: 50%;">
+                  <div class="wave-bg"></div>
+                </div>
+                <span class="water-percent-text" id="sk-water-height">조위 분석중</span>
+              </div>
+              <div class="gauge-footer">
+                <span id="sk-gauge-status" class="status-rising">로딩 중...</span>
+              </div>
+            </div>
+
+            <!-- Tide progress timeline card -->
+            <div class="tide-progress-container card">
+              <div class="progress-header">
+                <span class="progress-title"><i data-lucide="compass"></i> 실시간 조류 흐름</span>
+                <span class="progress-percent" id="sk-progress-pct">진행률 --%</span>
+              </div>
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" id="sk-progress-bar" style="width: 0%;"></div>
+                <div class="progress-pointer" id="sk-progress-pointer" style="left: 0%;"></div>
+              </div>
+              <div class="progress-labels">
+                <span class="label-prev" id="sk-progress-prev">이전 --:--</span>
+                <span class="label-next" id="sk-progress-next">다음 --:--</span>
+              </div>
+              <div class="progress-desc" id="sk-progress-desc">물때 이동 정보 계산 중...</div>
+            </div>
+
+            <!-- Weather Details -->
+            <div class="weather-sub-panel card">
+              <div class="weather-row-main">
+                <div class="weather-icon-wrapper" id="sk-weather-icon">
+                  <i data-lucide="cloud-sun" class="icon-lg"></i>
+                </div>
+                <div class="weather-temp-block">
+                  <span class="temp-val" id="sk-temp">--°C</span>
+                  <span class="weather-desc" id="sk-weather-desc">로딩 중...</span>
+                </div>
+              </div>
+              <div class="weather-grid-details">
+                <div class="detail-item">
+                  <span class="detail-label"><i data-lucide="wind"></i> 풍속/풍향</span>
+                  <span class="detail-value" id="sk-wind">--</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label"><i data-lucide="droplets"></i> 습도</span>
+                  <span class="detail-value" id="sk-humidity">--%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 2: GIANT High / Low Tide Details -->
+          <div class="tide-block-right">
+            <h3 class="block-title"><i data-lucide="chevrons-up-down"></i> 만조 / 간조 시간표 <span class="title-sub">(조석 정보 기준)</span></h3>
+            
+            <div class="tide-readout-grid" id="sk-tide-readouts">
+              <div class="tide-item-card high-tide-card">
+                <div class="tide-type-badge">만조 (High)</div>
+                <div class="tide-time-giant">▲ --:--</div>
+              </div>
+              <div class="tide-item-card low-tide-card">
+                <div class="tide-type-badge">간조 (Low)</div>
+                <div class="tide-time-giant">▼ --:--</div>
+              </div>
+            </div>
+
+            <!-- Tide Index chart info -->
+            <div class="tide-coefficient-card card">
+              <div class="coef-header">
+                <span>물때 계수 (Tide Coefficient)</span>
+                <span class="coef-val" id="sk-coef-val">--</span>
+              </div>
+              <div class="coef-bar-wrapper">
+                <div class="coef-bar-fill" id="sk-coef-bar" style="width: 0%;"></div>
+              </div>
+              <p class="coef-help"><i data-lucide="help-circle"></i> 사리(물때수치 높음) 기간에는 조석 간만의 차가 크고 유속이 빨라집니다. 조금 기간에는 유속이 느려집니다.</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- iOS Install Prompt Modal (Hidden by default) -->
+    <div id="ios-install-modal" class="ios-install-overlay hidden">
+      <div class="ios-install-card">
+        <div class="modal-header-ios">
+          <div class="app-info-ios">
+            <img src="icon-192.png" alt="바다로그" class="app-logo-mini">
+            <div>
+              <h3>바다로그 앱 설치</h3>
+              <p>iPhone 홈 화면에 추가하여 편리하게 이용하세요.</p>
+            </div>
+          </div>
+          <button id="close-install-modal" class="close-btn-ios">&times;</button>
+        </div>
+        <div class="install-steps-ios">
+          <div class="step-ios">
+            <span class="step-num-ios">1</span>
+            <p>Safari 브라우저 하단 바의 <strong>공유</strong> 버튼 <span class="share-icon-placeholder-ios"><i data-lucide="share" style="width:14px;height:14px;display:inline-block;stroke-width:2.2;vertical-align:middle;"></i></span>을 터치합니다.</p>
+          </div>
+          <div class="step-ios">
+            <span class="step-num-ios">2</span>
+            <p>스크롤을 아래로 내려 <strong>'홈 화면에 추가'</strong>를 선택합니다.</p>
+          </div>
+          <div class="step-ios">
+            <span class="step-num-ios">3</span>
+            <p>상단 우측의 <strong>'추가'</strong>를 터치하면 앱 설치가 끝납니다!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>© 2026 바다로그 (TideCast) 해양 예보. Powered by Astronomical Tide Calculation & Open-Meteo Weather API</p>
+      <p class="footer-alert">본 정보는 해상 기상 및 달 주기에 의한 계산 수치이며, 현지 기상 조건에 따라 조석 차이가 다소 생길 수 있으므로 항해 및 해루질 시 안전에 주의해 주세요.</p>
+    </footer>
+
+  </div>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.400.0/dist/umd/lucide.min.js"></script>
+  <!-- Main Application Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
