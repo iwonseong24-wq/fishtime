@@ -68,6 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const dateInput = document.getElementById('target-date');
   
   // Yeongmok Port DOM
+  const ymHeaderDateTide = document.getElementById('ym-header-date-tide');
   const ymDateBadge = document.getElementById('ym-date-badge');
   const ymGaugeTime = document.getElementById('ym-gauge-time');
   const ymWaterWave = document.getElementById('ym-water-wave');
@@ -90,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const ymProgressDesc = document.getElementById('ym-progress-desc');
 
   // Muuido DOM
+  const muHeaderDateTide = document.getElementById('mu-header-date-tide');
   const muTideBadge = document.getElementById('mu-tide-badge');
   const muWaterWave = document.getElementById('mu-water-wave');
   const muWaterHeight = document.getElementById('mu-water-height');
@@ -112,6 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const muProgressDesc = document.getElementById('mu-progress-desc');
 
   // Sokcho DOM
+  const skHeaderDateTide = document.getElementById('sk-header-date-tide');
   const skTideBadge = document.getElementById('sk-tide-badge');
   const skWaterWave = document.getElementById('sk-water-wave');
   const skWaterHeight = document.getElementById('sk-water-height');
@@ -479,8 +482,21 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
+    // Construct simplified header date & tide badge (e.g. 7월 7일 (화) | 12물)
+    const headerMonth = selectedDate.getMonth() + 1;
+    const headerDay = selectedDate.getDate();
+    const weekdayNames = ['일', '월', '화', '수', '목', '금', '토'];
+    const headerWeekday = weekdayNames[selectedDate.getDay()];
+    const headerDateText = `${headerMonth}월 ${headerDay}일 (${headerWeekday})`;
+
+    const headerDateTideHTML = `
+      <span class="header-date-text">${headerDateText}</span>
+      <span class="header-tide-badge">${tideIdx.name}</span>
+    `;
+
     // --- 1. Yeongmok Port UI Render ---
     ymDateBadge.innerHTML = `${formattedDateStr} (${estLunarDayStr}) | <strong class="badge-tide">${tideIdx.name}</strong>`;
+    ymHeaderDateTide.innerHTML = headerDateTideHTML;
     ymMoonBadge.innerHTML = `${moon.svg}<span>${moon.name} (월령 ${moon.age}일)</span>`;
     
     const ymTides = getTidesForDate(selectedDate, 'yeongmok');
@@ -516,6 +532,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 2. Muuido UI Render ---
     muTideBadge.innerHTML = `${formattedDateStr} (${estLunarDayStr}) | <strong class="badge-tide">${tideIdx.name}</strong>`;
+    muHeaderDateTide.innerHTML = headerDateTideHTML;
     muMoonBadge.innerHTML = `${moon.svg}<span>${moon.name} (월령 ${moon.age}일)</span>`;
     
     const muTides = getTidesForDate(selectedDate, 'muuido');
@@ -550,6 +567,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 3. Sokcho Port UI Render ---
     skTideBadge.innerHTML = `${formattedDateStr} (${estLunarDayStr}) | <strong class="badge-tide">${tideIdx.name}</strong>`;
+    skHeaderDateTide.innerHTML = headerDateTideHTML;
     skMoonBadge.innerHTML = `${moon.svg}<span>${moon.name} (월령 ${moon.age}일)</span>`;
     
     const skTides = getTidesForDate(selectedDate, 'sokcho');
