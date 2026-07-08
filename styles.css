@@ -231,10 +231,7 @@ body {
 }
 
 .port-eng {
-  font-size: 1rem;
-  font-weight: 400;
-  color: var(--color-text-muted);
-  margin-left: 0.35rem;
+  display: none !important;
 }
 
 .port-location-tag {
@@ -711,10 +708,7 @@ body {
 }
 
 .port-eng-sm {
-  font-size: 0.85rem;
-  font-weight: 400;
-  color: var(--color-text-muted);
-  margin-left: 0.25rem;
+  display: none !important;
 }
 
 .date-tide-badge-sm {
