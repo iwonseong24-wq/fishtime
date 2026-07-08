@@ -1705,11 +1705,17 @@ body {
   line-height: 1;
 }
 
-/* Header Weather elements */
-.header-weather-tide-row {
+/* Header Weather and Date elements */
+.header-weather-date-row {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+}
+
+.header-tide-row {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
 }
 
 .header-weather-info {
@@ -1744,7 +1750,7 @@ body {
     border-radius: 6px;
     border-color: rgba(255, 255, 255, 0.5);
   }
-  .header-weather-tide-row {
+  .header-weather-date-row {
     gap: 0.45rem;
   }
   .header-weather-info {

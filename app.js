@@ -456,6 +456,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Helper to render simplified date, weather, and tide badge in port card headers
   function renderHeaderDateTide(container, tideName, weatherData) {
+    // Rescue calendarModal from container before overwriting innerHTML to prevent destruction
+    const calendarModal = document.getElementById('calendar-layer-modal');
+    const calendarBtnWrapper = document.querySelector('.calendar-btn-wrapper');
+    if (calendarModal && container.contains(calendarModal)) {
+      if (calendarBtnWrapper) {
+        calendarBtnWrapper.appendChild(calendarModal);
+      } else {
+        document.body.appendChild(calendarModal);
+      }
+    }
+
     const headerMonth = selectedDate.getMonth() + 1;
     const headerDay = selectedDate.getDate();
     const weekdayNames = ['일', '월', '화', '수', '목', '금', '토'];
@@ -479,9 +490,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     container.innerHTML = `
-      <span class="header-date-text" style="cursor: pointer;">${headerDateText}</span>
-      <div class="header-weather-tide-row">
+      <div class="header-weather-date-row">
         ${weatherHTML}
+        <span class="header-date-text" style="cursor: pointer;">${headerDateText}</span>
+      </div>
+      <div class="header-tide-row">
         <span class="header-tide-badge">${tideName}</span>
       </div>
     `;
