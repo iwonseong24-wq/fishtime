@@ -498,6 +498,16 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const calendarModal = document.getElementById('calendar-layer-modal');
         if (calendarModal) {
+          // Remove class from all cards, then add it to the parent card of this container
+          document.querySelectorAll('.card').forEach(card => {
+            card.classList.remove('has-open-calendar');
+          });
+          const parentCard = container.closest('.card');
+          if (parentCard) {
+            parentCard.classList.add('has-open-calendar');
+          }
+          
+          container.appendChild(calendarModal);
           calendarModal.classList.remove('hidden');
         }
       });
@@ -870,6 +880,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- 8. Custom Calendar Layer Modal Logic ---
   const calendarModal = document.getElementById('calendar-layer-modal');
   const calendarTriggerBtn = document.getElementById('calendar-trigger-btn');
+  const calendarBtnWrapper = document.querySelector('.calendar-btn-wrapper');
   const calendarDaysGrid = document.getElementById('calendar-days-grid');
   const calMonthTitle = document.getElementById('cal-month-title');
   const calPrevMonth = document.getElementById('cal-prev-month');
@@ -940,6 +951,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateDashboard();
         calendarModal.classList.add('hidden');
+        document.querySelectorAll('.card').forEach(card => {
+          card.classList.remove('has-open-calendar');
+        });
       });
 
       calendarDaysGrid.appendChild(cell);
@@ -960,9 +974,19 @@ document.addEventListener('DOMContentLoaded', () => {
   if (calendarTriggerBtn) {
     calendarTriggerBtn.addEventListener('click', (e) => {
       e.preventDefault();
+      e.stopPropagation();
       currentCalYear = selectedDate.getFullYear();
       currentCalMonth = selectedDate.getMonth();
       renderCalendarGrid();
+      
+      // Remove open classes from all cards
+      document.querySelectorAll('.card').forEach(card => {
+        card.classList.remove('has-open-calendar');
+      });
+      
+      if (calendarBtnWrapper && calendarModal) {
+        calendarBtnWrapper.appendChild(calendarModal);
+      }
       calendarModal.classList.remove('hidden');
     });
   }
@@ -971,6 +995,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (calCloseBtn) {
     calCloseBtn.addEventListener('click', () => {
       calendarModal.classList.add('hidden');
+      document.querySelectorAll('.card').forEach(card => {
+        card.classList.remove('has-open-calendar');
+      });
     });
   }
 
@@ -980,6 +1007,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const isDateClick = e.target.classList.contains('header-date-text') || e.target.closest('.header-date-text');
       if (!calendarModal.contains(e.target) && !calendarTriggerBtn.contains(e.target) && !isDateClick) {
         calendarModal.classList.add('hidden');
+        document.querySelectorAll('.card').forEach(card => {
+          card.classList.remove('has-open-calendar');
+        });
       }
     }
   });

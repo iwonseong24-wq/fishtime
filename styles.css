@@ -1677,6 +1677,7 @@ body {
   flex-direction: column;
   align-items: flex-end;
   gap: 0.35rem;
+  position: relative; /* Anchor for absolute calendar popup */
 }
 
 .header-date-text {
@@ -1757,4 +1758,9 @@ body {
   .port-header-date-tide {
     gap: 0.25rem;
   }
+}
+
+/* Elevate card layering context when hosting the active calendar dropdown */
+.card.has-open-calendar {
+  z-index: 300 !important;
 }
