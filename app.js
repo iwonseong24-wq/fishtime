@@ -454,6 +454,61 @@ document.addEventListener('DOMContentLoaded', () => {
     return arrows[idx];
   }
 
+  // Helper to render simplified date, weather, and tide badge in port card headers
+  function renderHeaderDateTide(container, tideName, weatherData) {
+    const headerMonth = selectedDate.getMonth() + 1;
+    const headerDay = selectedDate.getDate();
+    const weekdayNames = ['일', '월', '화', '수', '목', '금', '토'];
+    const headerWeekday = weekdayNames[selectedDate.getDay()];
+    const headerDateText = `${headerMonth}월 ${headerDay}일 (${headerWeekday})`;
+
+    let weatherHTML = '';
+    if (weatherData) {
+      weatherHTML = `
+        <div class="header-weather-info">
+          <i data-lucide="${weatherData.icon}" class="weather-mini-icon"></i>
+          <span class="weather-mini-temp">${weatherData.temp}°C</span>
+        </div>
+      `;
+    } else {
+      weatherHTML = `
+        <div class="header-weather-info loading-mini">
+          <span class="weather-mini-temp">--°C</span>
+        </div>
+      `;
+    }
+
+    container.innerHTML = `
+      <span class="header-date-text" style="cursor: pointer;">${headerDateText}</span>
+      <div class="header-weather-tide-row">
+        ${weatherHTML}
+        <span class="header-tide-badge">${tideName}</span>
+      </div>
+    `;
+
+    // Bind click trigger to date text to open custom calendar
+    const dateEl = container.querySelector('.header-date-text');
+    if (dateEl) {
+      dateEl.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        currentCalYear = selectedDate.getFullYear();
+        currentCalMonth = selectedDate.getMonth();
+        renderCalendarGrid();
+        
+        const calendarModal = document.getElementById('calendar-layer-modal');
+        if (calendarModal) {
+          calendarModal.classList.remove('hidden');
+        }
+      });
+    }
+
+    // Update weather mini icons
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+  }
+
   // ==========================================================================
   // Dashboard UI Updates
   // ==========================================================================
@@ -482,21 +537,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Construct simplified header date & tide badge (e.g. 7월 7일 (화) | 12물)
-    const headerMonth = selectedDate.getMonth() + 1;
-    const headerDay = selectedDate.getDate();
-    const weekdayNames = ['일', '월', '화', '수', '목', '금', '토'];
-    const headerWeekday = weekdayNames[selectedDate.getDay()];
-    const headerDateText = `${headerMonth}월 ${headerDay}일 (${headerWeekday})`;
-
-    const headerDateTideHTML = `
-      <span class="header-date-text">${headerDateText}</span>
-      <span class="header-tide-badge">${tideIdx.name}</span>
-    `;
+    // Render initial simplified date & tide badges (weather loading state)
+    renderHeaderDateTide(ymHeaderDateTide, tideIdx.name, null);
+    renderHeaderDateTide(muHeaderDateTide, tideIdx.name, null);
+    renderHeaderDateTide(skHeaderDateTide, tideIdx.name, null);
 
     // --- 1. Yeongmok Port UI Render ---
     ymDateBadge.innerHTML = `${formattedDateStr} (${estLunarDayStr}) | <strong class="badge-tide">${tideIdx.name}</strong>`;
-    ymHeaderDateTide.innerHTML = headerDateTideHTML;
     ymMoonBadge.innerHTML = `${moon.svg}<span>${moon.name} (월령 ${moon.age}일)</span>`;
     
     const ymTides = getTidesForDate(selectedDate, 'yeongmok');
@@ -522,6 +569,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ymCoefBar.style.width = `${coef.value}%`;
 
     const ymWeather = await fetchWeatherData(PORT_CONFIGS.yeongmok.lat, PORT_CONFIGS.yeongmok.lon);
+    renderHeaderDateTide(ymHeaderDateTide, tideIdx.name, ymWeather);
     ymTemp.textContent = `${ymWeather.temp}°C`;
     ymWeatherDesc.textContent = ymWeather.desc;
     ymWind.textContent = `${getWindArrow(ymWeather.windDir)} ${ymWeather.windSpeed} m/s`;
@@ -532,7 +580,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 2. Muuido UI Render ---
     muTideBadge.innerHTML = `${formattedDateStr} (${estLunarDayStr}) | <strong class="badge-tide">${tideIdx.name}</strong>`;
-    muHeaderDateTide.innerHTML = headerDateTideHTML;
     muMoonBadge.innerHTML = `${moon.svg}<span>${moon.name} (월령 ${moon.age}일)</span>`;
     
     const muTides = getTidesForDate(selectedDate, 'muuido');
@@ -557,6 +604,7 @@ document.addEventListener('DOMContentLoaded', () => {
     muCoefBar.style.width = `${coef.value}%`;
 
     const muWeather = await fetchWeatherData(PORT_CONFIGS.muuido.lat, PORT_CONFIGS.muuido.lon);
+    renderHeaderDateTide(muHeaderDateTide, tideIdx.name, muWeather);
     muTemp.textContent = `${muWeather.temp}°C`;
     muWeatherDesc.textContent = muWeather.desc;
     muWind.textContent = `${getWindArrow(muWeather.windDir)} ${muWeather.windSpeed} m/s`;
@@ -567,7 +615,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 3. Sokcho Port UI Render ---
     skTideBadge.innerHTML = `${formattedDateStr} (${estLunarDayStr}) | <strong class="badge-tide">${tideIdx.name}</strong>`;
-    skHeaderDateTide.innerHTML = headerDateTideHTML;
     skMoonBadge.innerHTML = `${moon.svg}<span>${moon.name} (월령 ${moon.age}일)</span>`;
     
     const skTides = getTidesForDate(selectedDate, 'sokcho');
@@ -592,6 +639,7 @@ document.addEventListener('DOMContentLoaded', () => {
     skCoefBar.style.width = `${coef.value}%`;
 
     const skWeather = await fetchWeatherData(PORT_CONFIGS.sokcho.lat, PORT_CONFIGS.sokcho.lon);
+    renderHeaderDateTide(skHeaderDateTide, tideIdx.name, skWeather);
     skTemp.textContent = `${skWeather.temp}°C`;
     skWeatherDesc.textContent = skWeather.desc;
     skWind.textContent = `${getWindArrow(skWeather.windDir)} ${skWeather.windSpeed} m/s`;
@@ -929,7 +977,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Close dropdown when clicking anywhere outside of it
   document.addEventListener('click', (e) => {
     if (calendarModal && !calendarModal.classList.contains('hidden')) {
-      if (!calendarModal.contains(e.target) && !calendarTriggerBtn.contains(e.target)) {
+      const isDateClick = e.target.classList.contains('header-date-text') || e.target.closest('.header-date-text');
+      if (!calendarModal.contains(e.target) && !calendarTriggerBtn.contains(e.target) && !isDateClick) {
         calendarModal.classList.add('hidden');
       }
     }
