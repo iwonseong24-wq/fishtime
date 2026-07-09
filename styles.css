@@ -1764,3 +1764,18 @@ body {
 .card.has-open-calendar {
   z-index: 300 !important;
 }
+
+/* Scale long tide badge up by 20% from previous size for 8물때 */
+.header-tide-badge.long-tide {
+  font-size: 0.9rem !important; /* 0.75rem * 1.2 = 0.9rem */
+  padding: 0.24rem 0.65rem !important;
+  border-radius: 7px !important;
+}
+
+@media (max-width: 768px) {
+  .header-tide-badge.long-tide {
+    font-size: 0.72rem !important; /* 0.6rem * 1.2 = 0.72rem */
+    padding: 0.18rem 0.48rem !important;
+    border-radius: 5px !important;
+  }
+}

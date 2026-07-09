@@ -489,13 +489,16 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
     }
 
+    const isLongTide = tideName.includes('8물');
+    const badgeClass = isLongTide ? 'header-tide-badge long-tide' : 'header-tide-badge';
+
     container.innerHTML = `
       <div class="header-weather-date-row">
         ${weatherHTML}
         <span class="header-date-text" style="cursor: pointer;">${headerDateText}</span>
       </div>
       <div class="header-tide-row">
-        <span class="header-tide-badge">${tideName}</span>
+        <span class="${badgeClass}">${tideName}</span>
       </div>
     `;
 
